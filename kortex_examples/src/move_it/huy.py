@@ -47,7 +47,7 @@ class ExampleMoveItTrajectories(object):
       self.is_init_success = False
     else:
       self.is_init_success = True
-
+  # Ham goi gia tri vi tri ve ros
   def callback_from_api(self, args, kwargs: dict, output):
     # {1:2}
     pose = output["pose"]
