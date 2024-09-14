@@ -8,6 +8,7 @@ import moveit_msgs.msg
 import geometry_msgs.msg
 from math import pi
 from std_srvs.srv import Empty
+from medbot_api.interface import add_callback
 
 class ExampleMoveItTrajectories(object):
   def __init__(self):
@@ -16,6 +17,7 @@ class ExampleMoveItTrajectories(object):
     super(ExampleMoveItTrajectories, self).__init__()
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('huy')
+    add_callback("abc", self.callback_from_api)
 
     try:
       self.is_gripper_present = rospy.get_param(rospy.get_namespace() + "is_gripper_present", False)
@@ -46,6 +48,10 @@ class ExampleMoveItTrajectories(object):
     else:
       self.is_init_success = True
 
+  def callback_from_api(self, args, kwargs: dict, output):
+    # {1:2}
+    pose = output["pose"]
+    self.reach_joint_angles_custom(pose)
 
   def reach_named_position(self, target):
     arm_group = self.arm_group
