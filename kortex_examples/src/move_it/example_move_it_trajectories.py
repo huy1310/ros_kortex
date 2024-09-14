@@ -188,53 +188,53 @@ def main():
       rospy.delete_param("/kortex_examples_test_results/moveit_general_python")
   except:
       pass
-
-  if success:
-    rospy.loginfo("Reaching Named Target Vertical...")
-    success &= example.reach_named_position("vertical")
-    print (success)
-  
-  if success:
-    rospy.loginfo("Reaching Joint Angles...")  
-    success &= example.reach_joint_angles(tolerance=0.01) #rad
-    print (success)
-  
-  if success:
-    rospy.loginfo("Reaching Named Target Home...")
-    success &= example.reach_named_position("home")
-    print (success)
-
-  if success:
-    rospy.loginfo("Reaching Cartesian Pose...")
+  for _ in range(2):
+    if success:
+      rospy.loginfo("Reaching Named Target Vertical...")
+      success &= example.reach_named_position("vertical")
+      print (success)
     
-    actual_pose = example.get_cartesian_pose()
-    actual_pose.position.z -= 0.2
-    success &= example.reach_cartesian_pose(pose=actual_pose, tolerance=0.01, constraints=None)
-    print (success)
+    if success:
+      rospy.loginfo("Reaching Joint Angles...")  
+      success &= example.reach_joint_angles(tolerance=0.01) #rad
+      print (success)
     
-  if example.degrees_of_freedom == 7 and success:
-    rospy.loginfo("Reach Cartesian Pose with constraints...")
-    # Get actual pose
-    actual_pose = example.get_cartesian_pose()
-    actual_pose.position.y -= 0.3
-    
-    # Orientation constraint (we want the end effector to stay the same orientation)
-    constraints = moveit_msgs.msg.Constraints()
-    orientation_constraint = moveit_msgs.msg.OrientationConstraint()
-    orientation_constraint.orientation = actual_pose.orientation
-    constraints.orientation_constraints.append(orientation_constraint)
+    if success:
+      rospy.loginfo("Reaching Named Target Home...")
+      success &= example.reach_named_position("home")
+      print (success)
 
-    # Send the goal
-    success &= example.reach_cartesian_pose(pose=actual_pose, tolerance=0.01, constraints=constraints)
+    if success:
+      rospy.loginfo("Reaching Cartesian Pose...")
+      
+      actual_pose = example.get_cartesian_pose()
+      actual_pose.position.z -= 0.2
+      success &= example.reach_cartesian_pose(pose=actual_pose, tolerance=0.01, constraints=None)
+      print (success)
+      
+    if example.degrees_of_freedom == 7 and success:
+      rospy.loginfo("Reach Cartesian Pose with constraints...")
+      # Get actual pose
+      actual_pose = example.get_cartesian_pose()
+      actual_pose.position.y -= 0.3
+      
+      # Orientation constraint (we want the end effector to stay the same orientation)
+      constraints = moveit_msgs.msg.Constraints()
+      orientation_constraint = moveit_msgs.msg.OrientationConstraint()
+      orientation_constraint.orientation = actual_pose.orientation
+      constraints.orientation_constraints.append(orientation_constraint)
 
-  if example.is_gripper_present and success:
-    rospy.loginfo("Opening the gripper...")
-    success &= example.reach_gripper_position(0)
-    print (success)
+      # Send the goal
+      success &= example.reach_cartesian_pose(pose=actual_pose, tolerance=0.01, constraints=constraints)
 
-    rospy.loginfo("Closing the gripper 50%...")
-    success &= example.reach_gripper_position(0.5)
-    print (success)
+    if example.is_gripper_present and success:
+      rospy.loginfo("Opening the gripper...")
+      success &= example.reach_gripper_position(0)
+      print (success)
+
+      rospy.loginfo("Closing the gripper 50%...")
+      success &= example.reach_gripper_position(0.5)
+      print (success)
 
   # For testing purposes
   rospy.set_param("/kortex_examples_test_results/moveit_general_python", success)
